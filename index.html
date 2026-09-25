@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Valkimsmor — Wings of Kim</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <div id="app"></div>
+
+  <!-- Cinematic layers -->
+  <div id="letterbox"><div class="lb top"></div><div class="lb bottom"></div></div>
+  <div id="fade"></div>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div id="vitals">
+      <div id="emblem">
+        <svg viewBox="0 0 120 120" class="glory-ring">
+          <circle cx="60" cy="60" r="52" class="ring-bg" />
+          <circle cx="60" cy="60" r="52" class="ring-fill" id="glory-fill" />
+        </svg>
+        <svg viewBox="0 0 100 100" class="sigil">
+          <path d="M50 12 L50 88 M30 34 L70 34" />
+          <circle cx="50" cy="50" r="30" />
+          <path d="M50 50 C 30 40, 14 44, 4 30 C 16 36, 26 34, 34 30 C 24 26, 18 20, 14 10 C 26 22, 38 26, 50 40" class="wingL" />
+          <path d="M50 50 C 70 40, 86 44, 96 30 C 84 36, 74 34, 66 30 C 76 26, 82 20, 86 10 C 74 22, 62 26, 50 40" class="wingL" />
+        </svg>
+        <div id="glory-label">JUDGMENT</div>
+      </div>
+      <div id="bars">
+        <div class="name-plate">VALKIMSMOR</div>
+        <div id="hp"><div id="hp-ghost"></div><div id="hp-fill"></div></div>
+        <div id="wings"></div>
+      </div>
+    </div>
+    <div id="objective"><div class="obj-title">Objective</div><div class="obj-text" id="obj-text"></div></div>
+    <div id="counter"><span class="f">✦ <b id="cnt-f">0</b></span><span class="s">❖ <b id="cnt-s">0</b></span><span class="r">✧ <b id="cnt-r">0</b></span></div>
+    <div id="boss" class="hidden"><div id="boss-name"></div><div id="boss-bar"><div id="boss-ghost"></div><div id="boss-fill"></div></div></div>
+    <div id="toasts"></div>
+    <div id="hint" class="hidden"></div>
+    <div id="prompt" class="hidden"><span class="key">E</span><span id="prompt-text"></span></div>
+    <div id="marker" class="hidden"><div class="diamond"></div><div class="dist"></div></div>
+    <div id="lock" class="hidden"></div>
+  </div>
+
+  <div id="subtitle" class="hidden"><div class="speaker"></div><div class="line"></div></div>
+
+  <div id="chapter-card" class="hidden">
+    <div class="numeral"></div>
+    <div class="title"></div>
+    <div class="realm"></div>
+    <div class="rule"></div>
+    <div class="verse"></div>
+    <div class="ref"></div>
+  </div>
+
+  <div id="bigtitle" class="hidden">
+    <div class="logo">VALKIMSMOR</div>
+    <div class="sub">Wings of Kim</div>
+  </div>
+
+  <!-- Title screen -->
+  <div id="title-screen" class="screen hidden">
+    <div class="title-wrap">
+      <div class="logo">VALKIMSMOR</div>
+      <div class="sub">— Wings of Kim —</div>
+      <div class="menu" id="title-menu"></div>
+      <div class="foot">“Eight feathers to bear the body, and a ninth for the one who falls beside you.” — Rule of the Wingbearers</div>
+    </div>
+    <div class="press" id="press-start">Click to begin</div>
+  </div>
+
+  <!-- Generic panel screens -->
+  <div id="panel" class="screen hidden"><div class="panel-inner"><h2 id="panel-title"></h2><div id="panel-body"></div><div class="menu" id="panel-menu"></div></div></div>
+
+  <div id="reader" class="screen hidden">
+    <div class="parchment">
+      <div class="kind" id="reader-kind"></div>
+      <h2 id="reader-title"></h2>
+      <div class="verse" id="reader-verse"></div>
+      <div class="ref" id="reader-ref"></div>
+      <div class="text" id="reader-text"></div>
+      <div class="close">Press <b>E</b> / <b>Enter</b> to continue</div>
+    </div>
+  </div>
+
+  <div id="death" class="screen hidden">
+    <div class="death-title">YOU HAVE FALLEN</div>
+    <div class="death-verse" id="death-verse"></div>
+    <div class="death-ref" id="death-ref"></div>
+    <div class="menu" id="death-menu"></div>
+  </div>
+
+  <div id="loading" class="screen hidden"><div class="spinner"></div><div class="loading-text">The Word goes forth...</div><div class="tip" id="loading-tip"></div></div>
+
+  <div id="credits" class="screen hidden"><div class="roll" id="credits-roll"></div></div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
