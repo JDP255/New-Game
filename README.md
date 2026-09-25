@@ -8,6 +8,12 @@ The full story and world are in **[docs/LORE.md](docs/LORE.md)**.
 
 ## Running it
 
+**Easiest:** double-click **`Valkimsmor.html`** in the project folder. It opens in your browser and plays straight away, with no install and no server. Chrome or Edge is recommended.
+
+If you change the code, run `npm run build:single` to rebuild that file.
+
+**For development:**
+
 ```bash
 npm install
 npm run dev        # then open the printed http://localhost:5173 link

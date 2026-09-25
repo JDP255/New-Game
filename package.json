@@ -2,12 +2,13 @@
   "name": "valkimsmor",
   "private": true,
   "version": "1.0.0",
-  "description": "Valkimsmor: Wings of Kim — a cinematic 3D third-person action game built with three.js",
+  "description": "Valkimsmor: Wings of Kim \u2014 a cinematic 3D third-person action game built with three.js",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:single": "vite build && node scripts/single-file.mjs"
   },
   "dependencies": {
     "three": "^0.170.0"
