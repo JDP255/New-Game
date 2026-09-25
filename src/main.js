@@ -72,7 +72,7 @@ class Game {
     audio.setVolumes(S.music, S.sfx);
 
     document.addEventListener('pointerlockchange', () => {
-      if (!document.pointerLockElement && this.state === 'playing' && !this.cinematicActive) this.pause();
+      if (!document.pointerLockElement && this.state === 'playing' && !this.cinematicActive && performance.now() - (this.cineEndT || 0) > 600) this.pause();
     });
     this.renderer.canvas.addEventListener('click', () => { if (this.state === 'playing') this.input.requestLock(); });
 
@@ -137,6 +137,7 @@ class Game {
 
   showTitle() {
     this.state = 'title';
+    this.ui.fade(0, 0.6);
     this.input.releaseLock();
     this.ui.showHUD(false);
     this.ui.setCine(false);
@@ -260,6 +261,9 @@ class Game {
 
   onChapterComplete() {
     const id = this.chapterId;
+    this.ui.fade(0, 0.8);
+    this.ui.setCine(false);
+    this.ui.subtitle(null, null);
     const d = this.save.data;
     if (this.chapterDef.trial) {
       d.trialBest = 10;
@@ -310,6 +314,8 @@ class Game {
 
   credits() {
     this.state = 'credits';
+    this.ui.fade(0, 0.6);
+    this.ui.setCine(false);
     this.input.releaseLock();
     this.ui.showHUD(false);
     audio.playTheme('hope', 0);
@@ -739,6 +745,7 @@ class Game {
     this.cinematic = new Cinematic(this, steps, (skipped) => {
       this.cinematic = null;
       this.cinematicActive = false;
+      this.cineEndT = performance.now();
       this.ui.setCine(false);
       this.player.scripted = null;
       this.cam.endCinematic(this.player);

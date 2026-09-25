@@ -2,6 +2,8 @@
 import { audio } from '../core/audio.js';
 
 const $ = (id) => document.getElementById(id);
+// Comfortable reading time for a line of text (seconds).
+export const readTime = (text) => 2.2 + (text || '').length * 0.07;
 
 export class UI {
   constructor() {
@@ -70,10 +72,11 @@ export class UI {
     t.innerHTML = html;
     this.toastsEl.appendChild(t);
     while (this.toastsEl.children.length > 5) this.toastsEl.firstChild.remove();
-    setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 500); }, 3600);
+    setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 500); }, 6500);
   }
 
-  hint(html, dur = 5) {
+  hint(html, dur = 9) {
+    dur = Math.max(dur, 9);
     const h = $('hint');
     h.innerHTML = html;
     h.classList.remove('hidden');
@@ -112,7 +115,7 @@ export class UI {
     s.classList.toggle('narrator', !speaker);
     s.querySelector('.speaker').textContent = speaker || '';
     s.querySelector('.line').textContent = line;
-    this.subTimer = dur;
+    this.subTimer = Math.max(dur, readTime(line));
   }
 
   chapterCard(ch, show = true) {

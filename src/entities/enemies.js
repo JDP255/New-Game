@@ -79,8 +79,9 @@ export class Enemy {
     const w = this.game.world;
     if (!this.flying) {
       this.vel.y -= 30 * dt;
+      const prevY = this.pos.y;
       this.pos.addScaledVector(this.vel, dt);
-      const g = w.groundAt(this.pos.x, this.pos.z, this.pos.y + 0.5, 1.0);
+      const g = w.floorAt(this.pos.x, this.pos.z, Math.max(prevY, this.pos.y) + 0.5, 1.0);
       if (this.pos.y <= g) {
         this.pos.y = g;
         if (this.vel.y < -12 && this.state === 'launched') this.game.fx.burst(this.pos, 10, { speed: 4, color: [0.5, 0.4, 0.5], life: 0.5, size: 0.8 });

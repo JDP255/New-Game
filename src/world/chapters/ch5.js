@@ -192,7 +192,7 @@ export function chapter5(g) {
         g.audio.stinger('holy');
         g.flash(0xfff4e0, 0.6);
         g.ui.subtitle('Molochar', 'WHO IS THAT? WHO WALKS WITH YOU IN MY FIRE?', 4);
-        setTimeout(() => g.ui.subtitle(null, 'A figure of light walks beside Valkimsmor. The flames will not touch him now.', 5), 4200);
+        setTimeout(() => g.ui.subtitle(null, 'A figure of light walks beside Valkimsmor. The flames will not touch him now.', 5), 6000);
         boss.warded = true;
       }, 4200);
     },

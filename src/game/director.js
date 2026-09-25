@@ -2,6 +2,7 @@
 // and plays scripted cinematics with camera shots, subtitles, music cues and events.
 import * as THREE from 'three';
 import { beamMaterial, glowSprite } from '../render/materials.js';
+import { readTime } from '../ui/ui.js';
 
 export class Cinematic {
   constructor(game, steps, onDone) {
@@ -19,7 +20,8 @@ export class Cinematic {
     const g = this.game;
     const ui = g.ui;
     if (s.shot && !skipping) g.cam.playShot(s.shot);
-    if (s.say && !skipping) ui.subtitle(s.say[0], s.say[1], s.dur || 4);
+    const sayDur = s.say ? Math.max((s.dur || 4) * 1.3, readTime(s.say[1])) : 0;
+    if (s.say && !skipping) ui.subtitle(s.say[0], s.say[1], sayDur + 0.3);
     if (s.do) s.do(g, skipping);
     if (s.player) {
       const p = g.player;
@@ -47,15 +49,17 @@ export class Cinematic {
     if (s.flash && !skipping) g.flash(s.flash, s.flashAmt || 0.8);
     if (skipping) return 0;
     if (s.wait !== undefined) return s.wait;
-    if (s.say) return s.dur || 4;
+    if (s.say) { this.onLine = true; return sayDur; }
+    this.onLine = false;
     return 0;
   }
 
   update(dt, input) {
     if (this.done) return;
     this.t += dt;
-    // Hold/press to skip.
-    if (input.skipPressed && this.t > 0.8) return this.skip();
+    // Esc skips the whole scene; Space / Enter / click jumps to the next line of dialogue.
+    if ((input.pressed('Escape') || input.gpPressed(9)) && this.t > 0.8) return this.skip();
+    if (input.advancePressed && this.onLine && this.t > 0.5) this.wait = 0;
     this.wait -= dt;
     while (this.wait <= 0 && !this.done) {
       if (this.i >= this.steps.length) { this.finish(); break; }

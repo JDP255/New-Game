@@ -166,14 +166,22 @@ export class Player {
     }
 
     // Integrate
+    const prevX = this.pos.x, prevY = this.pos.y, prevZ = this.pos.z;
     this.pos.addScaledVector(this.vel, dt);
+    // Steep terrain acts as a wall while walking (instead of letting you sink into it).
+    if (w.heightFn && this.onGround && w.heightFn(this.pos.x, this.pos.z) - prevY > 1.4) {
+      this.pos.x = prevX;
+      this.pos.z = prevZ;
+    }
     // Ceiling
     const ceil = w.ceilingAt(this.pos.x, this.pos.z, this.pos.y);
     if (this.pos.y + 2 > ceil) { this.pos.y = ceil - 2; this.vel.y = Math.min(0, this.vel.y); }
     w.collide(this.pos, 0.45, 2);
 
     // Ground
-    const gy = w.groundAt(this.pos.x, this.pos.z, this.pos.y + 0.1, this.onGround ? 0.9 : 0.25);
+    const gy = w.floorAt(this.pos.x, this.pos.z, Math.max(prevY, this.pos.y) + 0.1, this.onGround ? 0.9 : 0.25);
+    // Never end up inside the ground, whatever the speed.
+    if (isFinite(gy) && this.pos.y < gy && this.vel.y > 0) this.pos.y = gy;
     const wasGround = this.onGround;
     if (this.pos.y <= gy + 0.02 && this.vel.y <= 0.01) {
       if (!wasGround) this.land(-this.vel.y);
@@ -709,7 +717,7 @@ export class Player {
     this.vel.z = damp(this.vel.z, 0, 4, dt);
     if (!this.onGround) this.vel.y -= 28 * dt;
     this.pos.addScaledVector(this.vel, dt);
-    const gy = this.game.world.groundAt(this.pos.x, this.pos.z, this.pos.y + 0.2, 0.5);
+    const gy = this.game.world.floorAt(this.pos.x, this.pos.z, this.pos.y + 0.2, 0.5);
     if (this.pos.y <= gy) { this.pos.y = gy; this.vel.y = 0; this.onGround = true; }
     kneelPose(this.pose, this.time);
     this.pose.head = [0.7, 0, 0];

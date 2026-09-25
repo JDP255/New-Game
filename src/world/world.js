@@ -76,6 +76,14 @@ export class World {
     return best;
   }
 
+  // Swept floor query: surfaces we were above at `fromY` (so fast falls can't tunnel through
+  // thin platforms), and the terrain heightfield always counts as solid ground.
+  floorAt(x, z, fromY, step = 0.25) {
+    let g = this.groundAt(x, z, fromY, step);
+    if (this.heightFn) g = Math.max(g, this.heightFn(x, z));
+    return g;
+  }
+
   // Highest solid surface regardless of current height (for spawning / camera).
   surfaceAt(x, z) { return this.groundAt(x, z, Infinity, 0); }
 
