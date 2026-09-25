@@ -842,7 +842,7 @@ class Game {
     this.cam.lockTarget = this.lockTarget;
     this.player.bossCam = this.bossTarget && this.bossTarget.alive && this.bossTarget.isBoss ? 9 + this.bossTarget.radius : 0;
 
-    this.cam.update(raw, input, this.player, this.world, controls && input.locked || controls && input.usingGamepad);
+    this.cam.update(raw, input, this.player, this.world, controls);
     this.world.update(this.time, dt, this.player.pos);
     this.updateSkyLerp(dt);
     this.fx.update(dt);

@@ -34,7 +34,8 @@ export class Input {
     addEventListener('mouseup', (e) => this.mouseButtons.delete(e.button));
     canvas.addEventListener('contextmenu', (e) => e.preventDefault());
     addEventListener('mousemove', (e) => {
-      if (this.locked) {
+      // Pointer lock gives free mouse-look; without it (e.g. sandboxed frames) drag with any button held.
+      if (this.locked || this.mouseButtons.size > 0) {
         this.mouseDX += e.movementX;
         this.mouseDY += e.movementY;
       }
