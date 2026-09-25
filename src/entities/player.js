@@ -132,19 +132,35 @@ export class Player {
     // Gravity (actions may override)
     if (!this.onGround && !(a && a.noGravity)) {
       let grav = 28;
-      if (this.state === 'glide') grav = 0;
+      if (this.state === 'glide' || this.inUpdraft) grav = 0;
       if (a && a.hover) grav = 6;
       this.vel.y -= grav * dt;
     }
-    // Updrafts
+    // Updrafts (Rivers of Breath): anything inside the column is carried upward automatically,
+    // gently pulled toward the centre, and eased to a hover at the top so you can glide off.
     this.inUpdraft = false;
-    if (w.updrafts) {
+    if (w.updrafts && !(a && (a.type === 'dive' || a.type === 'judgment'))) {
       for (const u of w.updrafts) {
         const dx = this.pos.x - u.x, dz = this.pos.z - u.z;
-        if (dx * dx + dz * dz < u.r * u.r && this.pos.y < u.top && this.pos.y > u.bottom - 2) {
+        const r = u.r * 1.35;
+        const d2 = dx * dx + dz * dz;
+        if (d2 < r * r && this.pos.y < u.top + 3 && this.pos.y > u.bottom - 3) {
           this.inUpdraft = true;
-          if (this.state === 'glide') this.vel.y = Math.min(14, this.vel.y + u.strength * dt);
-          else if (!this.onGround) this.vel.y = Math.min(8, this.vel.y + u.strength * 0.5 * dt);
+          const toTop = u.top - this.pos.y;
+          const want = toTop > 6 ? 15 : toTop > 0 ? 2 + toTop * 2.2 : -1;
+          this.vel.y = damp(this.vel.y, want, 5, dt);
+          if (this.onGround && toTop > 1) { this.onGround = false; this.pos.y += 0.3; this.state = 'air'; }
+          // Hold the player in the column: slow drift and a soft pull to the centre.
+          this.updraftTop = toTop < 2.5;
+          if (!this.updraftTop) {
+            const d = Math.sqrt(d2) || 1;
+            const pull = Math.min(1, d / r) * 6;
+            this.vel.x = damp(this.vel.x, -dx / d * pull + this.vel.x * 0.35, 3, dt);
+            this.vel.z = damp(this.vel.z, -dz / d * pull + this.vel.z * 0.35, 3, dt);
+          }
+          this.stamina = Math.min(this.maxStamina, this.stamina + dt * 2);
+          if (Math.random() < 0.3) this.game.fx.spawn(this.pos.x + (Math.random() - 0.5) * 2, this.pos.y, this.pos.z + (Math.random() - 0.5) * 2, 0, 8, 0, { life: 0.5, size: 0.3, color: [1.5, 1.3, 0.8] });
+          if (!this.updraftHinted) { this.updraftHinted = true; this.game.ui.hint('The River of Breath carries you up — at the top, hold <kbd>Space</kbd> to glide away.', 5); }
         }
       }
     }
@@ -476,7 +492,7 @@ export class Player {
       }
     } else {
       this.sprinting = false;
-      const gliding = controls && input.jumpHeld && this.vel.y < 2 && !this.flapBoost;
+      const gliding = controls && input.jumpHeld && (this.vel.y < 2 || this.inUpdraft) && !this.flapBoost;
       if (gliding) {
         if (this.state !== 'glide') g.audio.sfx('flap');
         this.state = 'glide';
@@ -484,7 +500,7 @@ export class Player {
         const turnRate = clamp(turn, -1, 1) * 2.6;
         this.yaw += turnRate * dt;
         this.bank = damp(this.bank, clamp(turn, -1, 1), 4, dt);
-        const sp = 15 + (wantMove > 0.1 ? 3 : 0);
+        const sp = this.inUpdraft && !this.updraftTop ? 3 : 15 + (wantMove > 0.1 ? 3 : 0);
         this.vel.x = damp(this.vel.x, Math.sin(this.yaw) * sp, 2.5, dt);
         this.vel.z = damp(this.vel.z, Math.cos(this.yaw) * sp, 2.5, dt);
         if (!this.inUpdraft) this.vel.y = damp(this.vel.y, -2.6, 3, dt);
